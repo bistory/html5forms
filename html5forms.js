@@ -45,6 +45,10 @@
 			var form = $(this);
 			var required = [];
 			var email = [];
+			
+			// Feature detection properties
+			var autofocus = supports_autofocus();
+			var placeholder = supports_placeholder();
 
 			// Setup color & placeholder function
 			function fillInput(input) {
@@ -82,9 +86,12 @@
 			// For each textarea & visible input excluding button, submit, radio, checkbox and select
 			$.each($(':input:visible:not(:button, :submit, :radio, :checkbox, select)', form), function(i) {
 				var that = $(this);
+				var isTextarea = $('textarea').filter(this).length > 0;
 				
 				// Setting color & placeholder
-				fillInput(that);
+				if(!placeholder || isTextarea) {
+					fillInput(that);
+				}
 				
 				// Make array of required inputs
 				if(this.required !== true) {
@@ -95,29 +102,43 @@
 				if(this.getAttribute('type') == 'email') {
 					email[i] = that;
 				}
-						  
+				
+				// Handle placeholder if not supported natively
+				
 				// FOCUS event attach 
 				// If input value == placeholder attribute will clear the field
 				// If input type == url will not
 				// In both cases will change the color with colorOn property				 
 				that.bind('focus', function(ev) {
-					// prevent autofocus to work
-					//ev.preventDefault();
-					if(this.value == that.attr('placeholder')) {
-						if(this.getAttribute('type')!='url') {
-							that.attr('value', '');   
-						} 
+					if(!placeholder || isTextarea) {
+						// prevent autofocus to work
+						//ev.preventDefault();
+						if(this.value == that.attr('placeholder')) {
+							if(this.getAttribute('type') != 'url') {
+								that.attr('value', '');   
+							}
+						}
+						that.css('color', opts.colorOn);
+					} else {
+						if(this.getAttribute('type') == 'url') {
+							that.attr('value', that.attr('placeholder'));   
+						}
 					}
-					that.css('color', opts.colorOn);
 				});
 				
 				// BLUR event attach
 				// If input value == empty calls fillInput fn
 				// if input type == url and value == placeholder attribute calls fn too
 				that.bind('blur', function(ev) {
-					ev.preventDefault();
-					if(this.value == '') {
-						fillInput(that);
+					if(!placeholder || isTextarea) {
+						ev.preventDefault();
+						if(this.value == '') {
+							fillInput(that);
+						} else {
+							if((this.getAttribute('type') == 'url') && (that.val() == that.attr('placeholder'))) {
+								fillInput(that);
+							}
+						}
 					} else {
 						if((this.getAttribute('type') == 'url') && (that.val() == that.attr('placeholder'))) {
 							fillInput(that);
@@ -126,7 +147,7 @@
 				});
 				
 				// Limits content typing to TEXTAREA type fields according to attribute maxlength
-				$('textarea').filter(this).each(function() {
+				if(isTextarea) {
 					if(that.attr('maxlength') > 0) {
 						that.keypress(function(ev) {
 							var cc = ev.charCode || ev.keyCode;
@@ -144,13 +165,15 @@
 							}
 						});
 					}
-				});
+				}
 			});
 			
 			// Handle autofocus on the first defined element
-			var autofocusField = form.find('[autofocus]').first();
-			if(autofocusField.autofocus !== true) {
-				autofocusField.focus();
+			if(!autofocus) {
+				var autofocusField = form.find('[autofocus]').first();
+				if(autofocusField.autofocus !== true) {
+					autofocusField.focus();
+				}
 			}
 			
 			$.each($(':submit', this), function() {
@@ -288,5 +311,17 @@
 				});
 			});
 		});
-	} 
+	}
+	
+	// Feature detection utilities
+	// Autofocus
+	function supports_autofocus() {
+		var i = document.createElement('input');
+		return 'autofocus' in i;
+	}
+	
+	function supports_placeholder() {
+		var i = document.createElement('input');
+		return 'placeholder' in i;
+	}
 })(jQuery);
