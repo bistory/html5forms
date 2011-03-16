@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+       Remove this if you use the .htaccess -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title></title>
+
+</head>
+
+<body>
+
+  <div id="container">
+    <header>
+
+    </header>
+    <div id="main" role="main">
+		<form action="upload.php" method="post" id="form_test">
+			<fieldset>
+				<legend>Multiple example</legend>
+				
+				<p>
+					<label for="name">Name</label>
+					<input type="text" name="name" id="name" title="Name" maxlength="60" placeholder="Name" autocomplete="off" required autofocus/>
+				</p>
+				
+				<p>
+					<label for="email">Email address</label>
+					<input type="email" name="email" id="email" title="Email address" maxlength="40" placeholder="Email address" autocomplete="off" required/>
+				</p>
+				
+				<p>
+					<label for="website">Web Site</label>
+					<input type="url" name="website" id="website" title="Web Site" maxlength="40" placeholder="http://" autocomplete="off" required/>
+				</p>
+				
+				<p>
+					<label for="telephone">Telephone (optional)</label>
+					<input type="tel" name="telephone" id="telephone" title="Telephone" maxlength="20" placeholder="Telephone" autocomplete="off"/>
+				</p>
+				
+				<p>
+					<label for="comment">Comment (max 100)</label>
+					<textarea name="comment" id="comment" title="Comment" cols="30" rows="5" maxlength="100" placeholder="Comment..." required>
+					</textarea>
+				</p>
+				
+				<p>
+					<input type="submit" value="Send" class="submit"/>
+				</p>
+		
+			</fieldset>
+		</form>
+    </div>
+    <footer>
+
+    </footer>
+  </div> <!--! end of #container -->
+
+
+  <!-- JavaScript at the bottom for fast page loading -->
+
+  <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if necessary -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js"></script>
+  <script>window.jQuery || document.write("<script src='js/libs/jquery-1.5.1.min.js'>\x3C/script>")</script>
+  
+  
+  <script src="../html5forms.js"></script>
+
+
+  <!-- Html5forms enabler -->
+  <script>
+	$(document).ready(function(){
+	    
+	    $('#form_test').html5form({
+	        allBrowsers : true,
+	        responseDiv : '#response',
+	        method : 'GET',
+	        colorOn :'#6b6764',
+	        colorOff :'#0d85a5'
+	    });
+	    
+	});
+  </script>
+
+</body>
+</html>

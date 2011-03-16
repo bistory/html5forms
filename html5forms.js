@@ -81,53 +81,54 @@
 						
 			// For each textarea & visible input excluding button, submit, radio, checkbox and select
 			$.each($(':input:visible:not(:button, :submit, :radio, :checkbox, select)', form), function(i) {
+				var that = $(this);
 				
 				// Setting color & placeholder
-				fillInput($(this));
+				fillInput(that);
 				
 				// Make array of required inputs
-				if(this.getAttribute('required') != null) {
-					required[i] = $(this);
+				if(this.required !== true) {
+					required[i] = that;
 				}
 				
 				// Make array of Email inputs			   
 				if(this.getAttribute('type') == 'email') {
-					email[i] = $(this);
+					email[i] = that;
 				}
 						  
 				// FOCUS event attach 
 				// If input value == placeholder attribute will clear the field
 				// If input type == url will not
 				// In both cases will change the color with colorOn property				 
-				$(this).bind('focus', function(ev){
-					ev.preventDefault();
-					if(this.value == $(this).attr('placeholder')){
-						if(this.getAttribute('type')!='url'){
-							$(this).attr('value', '');   
+				that.bind('focus', function(ev) {
+					// prevent autofocus to work
+					//ev.preventDefault();
+					if(this.value == that.attr('placeholder')) {
+						if(this.getAttribute('type')!='url') {
+							that.attr('value', '');   
 						} 
 					}
-					$(this).css('color', opts.colorOn);
+					that.css('color', opts.colorOn);
 				});
 				
 				// BLUR event attach
 				// If input value == empty calls fillInput fn
 				// if input type == url and value == placeholder attribute calls fn too
-				$(this).bind('blur', function(ev){
+				that.bind('blur', function(ev) {
 					ev.preventDefault();
-					if(this.value == ''){
-						fillInput($(this));
-					}
-					else{
-						if((this.getAttribute('type') == 'url') && ($(this).val() == $(this).attr('placeholder'))){
-							fillInput($(this));
+					if(this.value == '') {
+						fillInput(that);
+					} else {
+						if((this.getAttribute('type') == 'url') && (that.val() == that.attr('placeholder'))) {
+							fillInput(that);
 						}
 					}
 				});
 				
 				// Limits content typing to TEXTAREA type fields according to attribute maxlength
 				$('textarea').filter(this).each(function() {
-					if($(this).attr('maxlength') > 0) {
-						$(this).keypress(function(ev) {
+					if(that.attr('maxlength') > 0) {
+						that.keypress(function(ev) {
 							var cc = ev.charCode || ev.keyCode;
 							if(cc == 37 || cc == 39) {
 								return true;
@@ -135,7 +136,7 @@
 							if(cc == 8 || cc == 46) {
 								return true;
 							}
-							if(this.value.length >= $(this).attr('maxlength')){
+							if(this.value.length >= that.attr('maxlength')) {
 								return false;   
 							}
 							else{
@@ -145,6 +146,13 @@
 					}
 				});
 			});
+			
+			// Handle autofocus on the first defined element
+			var autofocusField = form.find('[autofocus]').first();
+			if(autofocusField.autofocus !== true) {
+				autofocusField.focus();
+			}
+			
 			$.each($(':submit', this), function() {
 				$(this).bind('click', function(ev) {
 									   

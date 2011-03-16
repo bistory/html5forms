@@ -4,4 +4,4 @@ Html5forms is a simple compatibility layer that allows you to use the most usefu
 
 Simply use the new HTML 5 api and make :
 
-    $('#myform').html5form();</pre>
+    $('#myform').html5form();
